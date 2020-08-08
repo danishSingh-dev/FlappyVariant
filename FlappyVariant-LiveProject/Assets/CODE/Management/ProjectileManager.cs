@@ -14,10 +14,6 @@ namespace Flappy.Management
     public class ProjectileManager : MonoBehaviour
     {
         #region Public Variables
-        //[SerializeField] private GameObject projectilePrefab = null;
-        //[SerializeField] private Transform poolParent = null;
-        //[SerializeField] private int copies = 1;
-        //[SerializeField] private string poolKey = " ";
 
         [SerializeField] private List<poolStructure> listOfPools = new List<poolStructure>();
         #endregion
@@ -25,6 +21,7 @@ namespace Flappy.Management
 
 
         #region Private Variables
+
         private Dictionary<string, Queue<GameObject>> projectileReferences = new Dictionary<string, Queue<GameObject>>();
         #endregion
 
@@ -33,20 +30,15 @@ namespace Flappy.Management
         #region MonoBehaviour Methods
         private void Start()
         {
-            //if(projectilePrefab && poolParent)
-            //{
-            //    ObjectDuplicator.PopulateDictionary(ref projectileReferences, poolParent, projectilePrefab, copies, poolKey);
-            //}
-
-
+            // check if there is at least one entry in the listOfPools
             if(listOfPools.Count > 0)
             {
+                // iterate through the list
                 foreach(var pool in listOfPools)
                 {
+                    // call duplication function from the ObjectDuplicator and provide reference to dictionary data structure
                     ObjectDuplicator.PopulateDictionaryWithPoolStructure(ref projectileReferences, pool);
-
                 }
-
             }
         }
 
