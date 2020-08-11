@@ -218,48 +218,7 @@ namespace Flappy.Management
             obstacle.transform.localScale = newScale;
         }
 
-        void ActivateNextObstacle(string key)
-        {
-            if (!obstacleReferences.ContainsKey(key)) 
-            {
-                Debug.LogError("There is no key-value pair that uses this key: " + key);
-                return; 
-            }
-
-            
-            int count = 1; 
-            
-            
-            for (int i = 0; i < obstacleReferences[key].Count; i++)
-            {
-                if(count == obstacleReferences[key].Count)
-                {
-                    Debug.Log("All obstacles are currently active");
-                    break;
-                }
-
-                GameObject tempObj = obstacleReferences[key].Dequeue();
-
-                if (tempObj.activeSelf)
-                {
-                    obstacleReferences[key].Enqueue(tempObj);
-                    count++;
-                    continue;
-                }
-                else
-                {
-                    tempObj.SetActive(true);
-                    tempObj.transform.localPosition = spawnPosition.localPosition;
-                    obstacleReferences[key].Enqueue(tempObj);
-                    
-                    
-                    break;
-                }
-
-            }
-
-
-        }
+        
         #endregion
     }
 }

@@ -23,7 +23,8 @@ namespace Flappy.Management
 
 
         #region Private Variables
-        
+        private BackgroundSoundManager bgSound = null;
+        private ScoreSystem scoreSystem = null;
         #endregion
 
 
@@ -58,6 +59,11 @@ namespace Flappy.Management
             }
         }
 
+        private void Start()
+        {
+            bgSound = BackgroundSoundManager.SM_Instance;
+            scoreSystem = ScoreSystem.SS_Instance;
+        }
 
         private void Update()
         {
@@ -71,6 +77,8 @@ namespace Flappy.Management
                     // set TimeScale to 0
                     Time.timeScale = 0;
 
+                    bgSound.SetVolume(true);
+
                     // TODO perform some gameOver action
                     Debug.Log("Game is Over");
 
@@ -79,6 +87,9 @@ namespace Flappy.Management
                 // check for player input and if TimeScale is set to 0
                 if (Input.GetKeyDown(KeyCode.Space) && Time.timeScale == 0)
                 {
+                    bgSound.SetVolume(false);
+                    scoreSystem.ResetScore();
+
                     // reset gameOver boolean to false
                     b_isGameOver = false;
 
@@ -93,6 +104,11 @@ namespace Flappy.Management
 
 
         #region Custom Methods
+
+        public void SetGameOver()
+        {
+            b_isGameOver = true;
+        }
 
         #endregion
     }
