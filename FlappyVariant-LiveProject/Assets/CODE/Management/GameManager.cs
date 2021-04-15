@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using Flappy.Player;
 
 namespace Flappy.Management
 {
@@ -16,6 +18,10 @@ namespace Flappy.Management
         // Boolean representing gameOver state
         [SerializeField] private bool b_isGameOver = false;
 
+        [SerializeField] private RectTransform StartMenuPanel = null;
+        [SerializeField] private RectTransform GameOverPanel = null;
+        [SerializeField] private Text HighScoreTextValue = null;
+
         // Singleton reference for GameManager
         public static GameManager GM_Instance = null;
         #endregion
@@ -23,8 +29,13 @@ namespace Flappy.Management
 
 
         #region Private Variables
+        private PlayerController player = null;
         private BackgroundSoundManager bgSound = null;
         private ScoreSystem scoreSystem = null;
+
+        private ObstacleManager obstacles = null;
+        private ProjectileManager projectiles = null;
+        private ParticleManager particles = null;
         #endregion
 
 
@@ -57,12 +68,31 @@ namespace Flappy.Management
                 // set the reference to this gameObject
                 GM_Instance = this;
             }
+
+
+            Time.timeScale = 0f;
+
+            if (!StartMenuPanel.gameObject.activeSelf)
+            {
+                StartMenuPanel.gameObject.SetActive(true);
+            }
+
+            if (GameOverPanel.gameObject.activeSelf)
+            {
+                GameOverPanel.gameObject.SetActive(false);
+            }
         }
 
         private void Start()
         {
             bgSound = BackgroundSoundManager.SM_Instance;
             scoreSystem = ScoreSystem.SS_Instance;
+            particles = ParticleManager.PA_Instance;
+            projectiles = ProjectileManager.PM_Instance;
+
+            obstacles = FindObjectOfType<ObstacleManager>();
+
+            player = FindObjectOfType<PlayerController>();
         }
 
         private void Update()
@@ -71,21 +101,17 @@ namespace Flappy.Management
             // if gameOver boolean is true
             if (b_isGameOver)
             {
-                // check if TimeScale is not 0
-                if(Time.timeScale != 0)
+                
+
+                // * KEYBOARD CONTROLS*
+                //check for player input and if TimeScale is set to 0
+                if (Input.GetKeyDown(KeyCode.Space) && Time.timeScale == 0)
                 {
-                    // set TimeScale to 0
-                    Time.timeScale = 0;
-
-                    bgSound.SetVolume(true);
-
-                    // TODO perform some gameOver action
-                    Debug.Log("Game is Over");
-
+                    
                 }
 
-                // check for player input and if TimeScale is set to 0
-                if (Input.GetKeyDown(KeyCode.Space) && Time.timeScale == 0)
+                // *TOUCH CONTROLS*
+                if (Input.touchCount > 0 && Time.timeScale == 0)
                 {
                     bgSound.SetVolume(false);
                     scoreSystem.ResetScore();
@@ -108,6 +134,59 @@ namespace Flappy.Management
         public void SetGameOver()
         {
             b_isGameOver = true;
+
+            // check if TimeScale is not 0
+            if (Time.timeScale != 0)
+            {
+                // set TimeScale to 0
+                Time.timeScale = 0;
+
+                bgSound.SetVolume(true);
+
+                GameOverPanel.gameObject.SetActive(true);
+
+                if(HighScoreTextValue == null) { return; }
+
+                HighScoreTextValue.text = scoreSystem.GetScore().ToString();
+            }
+
+            ResetAllGameElements();
+        }
+
+        public void StartGame()
+        {
+            if(StartMenuPanel == null) { return; }
+
+            StartMenuPanel.gameObject.SetActive(false);
+
+            Time.timeScale = 1f;
+        }
+
+        public void RestartGame()
+        {
+            if(GameOverPanel == null) { return; }
+
+            GameOverPanel.gameObject.SetActive(false);
+
+            bgSound.SetVolume(false);
+
+            scoreSystem.ResetScore();
+
+            // reset gameOver boolean to false
+            b_isGameOver = false;
+
+            // reset TimeScale to 1
+            Time.timeScale = 1;
+        }
+
+
+        void ResetAllGameElements()
+        {
+            player.ResetPlayer();
+
+            obstacles.ResetAllObstacles();
+            projectiles.ResetAllProjectiles();
+            particles.ResetAllParticles();
         }
 
         #endregion

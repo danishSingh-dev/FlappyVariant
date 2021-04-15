@@ -96,6 +96,29 @@ namespace Flappy.Management
             }
         }
 
+        public void ResetAllParticles()
+        {
+            foreach (var pool in listOfPools)
+            {
+                for (int i = 0; i < particleReferences[pool.poolKey].Count; i++)
+                {
+                    GameObject temp = particleReferences[pool.poolKey].Dequeue();
+                    particleReferences[pool.poolKey].Enqueue(temp);
+
+                    if (temp.activeSelf)
+                    {
+                        temp.SetActive(false);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
+
+                }
+            }
+        }
+
 
         #endregion
     }

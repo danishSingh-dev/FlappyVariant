@@ -218,7 +218,28 @@ namespace Flappy.Management
             obstacle.transform.localScale = newScale;
         }
 
-        
+
+        public void ResetAllObstacles()
+        {
+            foreach (var pool in listOfPools)
+            {
+                for (int i = 0; i < obstacleReferences[pool.poolKey].Count; i++)
+                {
+                    GameObject temp = obstacleReferences[pool.poolKey].Dequeue();
+                    obstacleReferences[pool.poolKey].Enqueue(temp);
+
+                    if (temp.activeSelf)
+                    {
+                        temp.SetActive(false);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+        }
+
         #endregion
     }
 }

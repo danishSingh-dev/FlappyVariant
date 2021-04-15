@@ -27,6 +27,7 @@ namespace Flappy.Player
 
         [Header("Shoot Parameters")]
         [SerializeField] private bool b_shoot = false;
+
         #endregion
 
 
@@ -38,6 +39,8 @@ namespace Flappy.Player
         private ShootingBehaviour shooter = null;
 
         private SFXManager sfxManager = null;
+
+        private Vector3 startPosition = Vector3.zero;
         #endregion
 
 
@@ -66,6 +69,8 @@ namespace Flappy.Player
             animationControl = GetComponentInChildren<AnimationControl>();
 
 
+
+            startPosition = transform.localPosition;
         }
 
 
@@ -73,6 +78,7 @@ namespace Flappy.Player
         {
             GetInput();
 
+            UpdateZRotatation();
         }
 
         private void FixedUpdate()
@@ -99,28 +105,40 @@ namespace Flappy.Player
         {
             // * KEYBOARD CONTROLS*
             // Checks if space is pressed on the keyboard and if jump boolean is false
-            if(Input.GetKeyDown(KeyCode.Space) && !b_jump)
-            {
-                // set jump boolean to true
-                b_jump = true;
-            }
+            //if(Input.GetKeyDown(KeyCode.Space) && !b_jump)
+            //{
+            //    // set jump boolean to true
+            //    b_jump = true;
+            //}
 
-            if(Input.GetMouseButtonDown(0) && !b_shoot)
-            {
-                b_shoot = true;
-            }
+            //if(Input.GetMouseButtonDown(0) && !b_shoot)
+            //{
+            //    b_shoot = true;
+            //}
 
 
             // * TOUCH CONTROLS*
             // Checks if there is at least one touch input and if jump boolean is false
-            if (Input.touchCount > 0 && !b_jump)
+            if (Input.touchCount > 0)
             {
-                // If the first touch input has just started
-                if (Input.GetTouch(0).phase == TouchPhase.Began)
+                for (int i = 0; i < Input.touchCount; i++)
                 {
-                    // set jump boolean to true
-                    b_jump = true;
+                    if(Input.GetTouch(i).position.x < Screen.width / 2)
+                    {
+                        b_jump = true;
+                    }
+                    else if(Input.GetTouch(i).position.x > Screen.width / 2)
+                    {
+                        b_shoot = true;
+                    }
                 }
+
+                //// If the first touch input has just started
+                //if (Input.GetTouch(0).phase == TouchPhase.Began)
+                //{
+                //    // set jump boolean to true
+                //    b_jump = true;
+                //}
             }
         }
 
@@ -151,13 +169,42 @@ namespace Flappy.Player
             {
                 return;
             }
+            b_shoot = false;
 
             animationControl.ActivateFireTrigger();
             shooter.TriggerShot();
+            //animationControl.ResetFireTrigger();
 
             sfxManager.PlayFireSound();
 
-            b_shoot = false;
+        }
+
+        void UpdateZRotatation()
+        {
+            Quaternion currentRotation = transform.rotation;
+            Quaternion targetRotation = Quaternion.Euler(Vector3.zero);
+            
+            if(rb.velocity.y > 0f)
+            {
+                targetRotation = Quaternion.Euler(0f, 0f, 20f);
+            }
+            else if(rb.velocity.y < 0f)
+            {
+                targetRotation = Quaternion.Euler(0f, 0f, -20f);
+            }
+            
+            transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, Time.deltaTime);
+        }
+
+
+        public void ResetPlayer()
+        {
+            transform.localPosition = startPosition;
+            transform.rotation = Quaternion.Euler(Vector3.zero);
+
+            rb.velocity = Vector3.zero;
+
+
         }
         #endregion
     }

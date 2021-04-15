@@ -42,6 +42,12 @@ namespace Flappy.Player
         public void ActivateFireTrigger()
         {
             animator.SetTrigger("FireProjectile");
+            
+        }
+
+        public void ResetFireTrigger()
+        {
+            animator.ResetTrigger("FireProjectile");
         }
 
         #endregion

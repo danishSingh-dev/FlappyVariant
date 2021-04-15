@@ -188,6 +188,29 @@ namespace Flappy.Management
             readyToFire = false;
         }
 
+        public void ResetAllProjectiles()
+        {
+            foreach(var pool in listOfPools)
+            {
+                for (int i = 0; i < projectileReferences[pool.poolKey].Count; i++)
+                {
+                    GameObject temp = projectileReferences[pool.poolKey].Dequeue();
+                    projectileReferences[pool.poolKey].Enqueue(temp);
+
+                    if (temp.activeSelf)
+                    {
+                        temp.SetActive(false);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
+
+                }
+            }
+        }
+
         #endregion
     }
 }

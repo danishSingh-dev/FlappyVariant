@@ -57,21 +57,6 @@ namespace Flappy.Management
             }
         }
 
-        private void Start()
-        {
-
-        }
-
-
-        private void Update()
-        {
-
-        }
-
-        private void FixedUpdate()
-        {
-
-        }
         #endregion
 
 
@@ -83,7 +68,7 @@ namespace Flappy.Management
         {
             score = newScore;
             scoreString = string.Format("{0:D4}", score);
-            scoreText.text = scoreString;
+            scoreText.text = "SCORE: " + scoreString;
         }
         #endregion
     }

@@ -67,6 +67,12 @@ namespace Flappy.Management
 
         #region Custom Methods
 
+        public int GetScore()
+        {
+            return scoreValue;
+        }
+
+
         public void AddToScore(int value)
         {
             scoreValue += value;
